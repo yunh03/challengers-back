@@ -11,30 +11,23 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class NcloudStorageConfiguration {
-    private final String accessKey;
+    @Value("${cloud.aws.credentials.access-key}")
+    private String accessKey;
 
-    private final String secretKey;
+    @Value("${cloud.aws.credentials.secret-key}")
+    private String secretKey;
 
-    private final String region;
-
-    private final String endPoint;
-
-    public NcloudStorageConfiguration(@Value("${cloud.aws.credentials.access-key}") String accessKey,
-                                      @Value("${cloud.aws.credentials.secret-key}") String secretKey,
-                                      @Value("${cloud.aws.region.static}") String region,
-                                      @Value("${cloud.aws.s3.endpoint}") String endPoint) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-        this.region = region;
-        this.endPoint = endPoint;
-    }
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     @Bean
     public AmazonS3Client amazonS3Client() {
-        BasicAWSCredentials awsCreds = new BasicAWSCredentials(accessKey,secretKey);
-        return (AmazonS3Client) AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endPoint, region))
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+
+        return (AmazonS3Client) AmazonS3ClientBuilder
+                .standard()
+                .withRegion(region)
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
     }
 }
