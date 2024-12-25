@@ -32,8 +32,8 @@ jobs:
     - name: Web Docker build and push
       run: |
         docker login -u ${{ secrets.DOCKER_REPO }} -p ${{ secrets.DOCKER_KEY }}
-        docker build -t ${{ secrets.DOCKER_REPO }}/koreanguide-backend:latest .
-        docker push ${{ secrets.DOCKER_REPO }}/koreanguide-backend
+        docker build -t ${{ secrets.DOCKER_REPO }}/challengers-backend:latest .
+        docker push ${{ secrets.DOCKER_REPO }}/challengers-backend
 
     # - name: Deploy to Ubuntu Server
     #   uses: appleboy/ssh-action@master
