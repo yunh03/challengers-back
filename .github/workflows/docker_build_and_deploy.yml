@@ -3,7 +3,7 @@ name: Build and Deploy to Ubuntu Server
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build_and_deploy:
@@ -29,21 +29,20 @@ jobs:
         mvn clean
         mvn package
 
-    - name: web docker build and push
+    - name: Web Docker build and push
       run: |
-          docker login -u ${{ secrets.DOCKER_REPO }} -p ${{ secrets.DOCKER_KEY }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/challengers-backend:latest .
-          docker push ${{ secrets.DOCKER_REPO }}/challengers-backend
+        docker login -u ${{ secrets.DOCKER_REPO }} -p ${{ secrets.DOCKER_KEY }}
+        docker build -t ${{ secrets.DOCKER_REPO }}/koreanguide-backend:latest .
+        docker push ${{ secrets.DOCKER_REPO }}/koreanguide-backend
 
-    - name: Deploy to Ubuntu Server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.SSH_PRIVATE_KEY }}
-        port : 1030
-        script: |
-          docker stop challengers-backend
-          docker rm challengers-backend
-          docker pull ${{ secrets.DOCKER_REPO }}/challengers-backend:latest
-          docker run -d -p 8080:8080 --net challengers --name challengers-backend ${{ secrets.DOCKER_REPO }}/challengers-backend:latest
+    # - name: Deploy to Ubuntu Server
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: ${{ secrets.HOST }}
+    #     username: ${{ secrets.USERNAME }}
+    #     key: ${{ secrets.SSH_PRIVATE_KEY_PEM }}
+    #     script: |
+    #       sudo docker stop backend
+    #       sudo docker rm backend
+    #       sudo docker pull ${{ secrets.DOCKER_REPO }}/koreanguide-backend:latest
+    #       sudo docker run -d -p 8080:8080 --net koreanguide --name backend ${{ secrets.DOCKER_REPO }}/koreanguide-backend:latest
